@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends Plus 8 - Ngữ pháp và Từ vựng</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fce4ec; /* Màu hồng nhạt */
+            background-image: url('https://www.transparenttextures.com/patterns/dust-and-scratches.png');
+            color: #4a148c; /* Màu tím đậm */
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #880e4f; /* Màu đỏ mận */
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #ad1457; /* Màu đỏ tím */
+            border-bottom: 2px solid #f06292;
+            padding-bottom: 5px;
+        }
+
+        .question-box {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #fff8f8;
+            border-radius: 10px;
+            border: 1px solid #ffcdd2;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .answer-input {
+            width: 70%;
+            padding: 10px;
+            border: 2px solid #f48fb1;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+
+        .submit-btn {
+            padding: 10px 20px;
+            background-color: #ff80ab;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #f50057;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .correct {
+            color: #4caf50; /* Xanh lá cây */
+        }
+
+        .incorrect {
+            color: #f44336; /* Đỏ */
+        }
+
+        .options {
+            margin-top: 15px;
+            display: none; /* Ẩn ban đầu */
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: #e91e63; /* Hồng */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+            transition: background-color 0.3s ease;
+        }
+
+        .option-btn:hover {
+            background-color: #c2185b; /* Hồng đậm */
+        }
+        
+        .summary {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            padding: 20px;
+            background-color: #e1bee7;
+            border-radius: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Friends Plus 8 - Luyện tập Ngữ pháp và Từ vựng</h1>
+    <p style="text-align: center; font-style: italic;">Cùng ôn lại kiến thức Friends Plus 8 nào! ✨</p>
+    
+    <div id="quiz-container">
+        </div>
+    
+    <div id="summary" class="summary">
+        <p>Kết quả của bạn: <span id="correct-count">0</span> / <span id="total-count">0</span> câu đúng.</p>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "Điền từ đúng vào chỗ trống: 'What was the last film that you _______?' (Bạn đã xem bộ phim cuối cùng nào?)",
+            type: "text",
+            correctAnswer: "saw",
+            options: ["see", "seen", "saw", "seeing"]
+        },
+        {
+            question: "Điền từ thích hợp: 'When was the last time that you _______ at a restaurant?' (Lần cuối cùng bạn ăn ở nhà hàng là khi nào?)",
+            type: "text",
+            correctAnswer: "ate",
+            options: ["eat", "eaten", "ate", "eating"]
+        },
+        {
+            question: "Chọn từ đúng: 'Did you _______ to a circus or a zoo?'",
+            type: "text",
+            correctAnswer: "go",
+            options: ["go", "went", "gone", "going"]
+        },
+        {
+            question: "Chọn từ đúng: 'Who taught you English at primary school?' (Ai đã dạy bạn tiếng Anh ở trường tiểu học?)",
+            type: "text",
+            correctAnswer: "taught",
+            options: ["teach", "taught", "teached", "teaching"]
+        },
+        {
+            question: "Hoàn thành câu: 'How old were your parents on their last birthday?' (Bố mẹ bạn bao nhiêu tuổi trong sinh nhật gần nhất của họ?)",
+            type: "text",
+            correctAnswer: "were",
+            options: ["was", "is", "are", "were"]
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let correctAnswersCount = 0;
+    const quizContainer = document.getElementById('quiz-container');
+
+    function loadQuestion() {
+        if (currentQuestionIndex >= quizData.length) {
+            showSummary();
+            return;
+        }
+
+        const data = quizData[currentQuestionIndex];
+        const questionBox = document.createElement('div');
+        questionBox.className = 'question-box';
+        questionBox.innerHTML = `
+            <div class="question-text">${currentQuestionIndex + 1}. ${data.question}</div>
+            <input type="text" class="answer-input" id="answer-input-${currentQuestionIndex}">
+            <button class="submit-btn" onclick="checkAnswer(${currentQuestionIndex})">Kiểm tra</button>
+            <div id="feedback-${currentQuestionIndex}" class="feedback"></div>
+            <div id="options-${currentQuestionIndex}" class="options"></div>
+        `;
+        quizContainer.appendChild(questionBox);
+    }
+
+    function checkAnswer(index) {
+        const inputElement = document.getElementById(`answer-input-${index}`);
+        const feedbackElement = document.getElementById(`feedback-${index}`);
+        const optionsElement = document.getElementById(`options-${index}`);
+        const data = quizData[index];
+        const userAnswer = inputElement.value.trim().toLowerCase();
+        const correctAnswer = data.correctAnswer.toLowerCase();
+
+        if (userAnswer === correctAnswer) {
+            feedbackElement.className = 'feedback correct';
+            feedbackElement.textContent = "🥳 Chính xác! Rất tốt!";
+            correctAnswersCount++;
+            setTimeout(() => {
+                quizContainer.removeChild(document.getElementById(`answer-input-${index}`).parentElement);
+                currentQuestionIndex++;
+                loadQuestion();
+            }, 1500);
+        } else {
+            feedbackElement.className = 'feedback incorrect';
+            feedbackElement.textContent = "😓 Sai rồi. Hãy thử lại!";
+            
+            // Hiển thị multiple choice
+            optionsElement.style.display = 'block';
+            optionsElement.innerHTML = ''; // Xóa các lựa chọn cũ nếu có
+            data.options.forEach(option => {
+                const optionBtn = document.createElement('button');
+                optionBtn.className = 'option-btn';
+                optionBtn.textContent = option;
+                optionBtn.onclick = () => checkMultipleChoice(option, index);
+                optionsElement.appendChild(optionBtn);
+            });
+            
+            // Ẩn nút "Kiểm tra" ban đầu sau khi trả lời sai lần đầu
+            document.querySelector(`#answer-input-${index}`).style.display = 'none';
+            document.querySelector(`#answer-input-${index}`).nextElementSibling.style.display = 'none';
+        }
+    }
+    
+    function checkMultipleChoice(option, index) {
+        const feedbackElement = document.getElementById(`feedback-${index}`);
+        const optionsElement = document.getElementById(`options-${index}`);
+        const data = quizData[index];
+        const correctAnswer = data.correctAnswer.toLowerCase();
+        
+        if (option.toLowerCase() === correctAnswer) {
+            feedbackElement.className = 'feedback correct';
+            feedbackElement.textContent = "🥳 Chính xác! Giỏi lắm!";
+            correctAnswersCount++;
+            setTimeout(() => {
+                quizContainer.removeChild(document.getElementById(`answer-input-${index}`).parentElement);
+                currentQuestionIndex++;
+                loadQuestion();
+            }, 1500);
+        } else {
+            feedbackElement.className = 'feedback incorrect';
+            feedbackElement.textContent = "😕 Đáp án chưa đúng. Hãy chọn lại nhé.";
+        }
+    }
+
+    function showSummary() {
+        const summaryElement = document.getElementById('summary');
+        document.getElementById('correct-count').textContent = correctAnswersCount;
+        document.getElementById('total-count').textContent = quizData.length;
+        summaryElement.style.display = 'block';
+        alert(`Chúc mừng! Bạn đã hoàn thành bài quiz. Số câu đúng: ${correctAnswersCount}/${quizData.length}.`);
+    }
+
+    // Tải câu hỏi đầu tiên khi trang được mở
+    window.onload = loadQuestion;
+</script>
+
+</body>
+</html>
